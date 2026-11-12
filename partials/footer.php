@@ -6,6 +6,7 @@
             <span>swd<span class="brand-light">shop</span></span>
         </a>
         <p>Thoughtful everyday essentials, picked for you.</p>
+        <a class="customer-lookup-link" href="order-lookup.php">Track an order</a>
         <span>&copy; <?= date('Y') ?> Swd Shop</span>
     </div>
 </footer>

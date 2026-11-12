@@ -29,31 +29,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $product) {
     } else {
         $quantityValue = $_POST['quantity'] ?? null;
         $quantity = filter_var($quantityValue, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
-        $stock = (int) $product['stock'];
-        $cart = $_SESSION['cart'] ?? [];
-        $alreadyInCart = is_array($cart) ? (int) ($cart[$product['id']] ?? 0) : 0;
-
-        if ($quantity === false || $stock < 1 || $quantity + $alreadyInCart > $stock) {
-            $message = $stock < 1
-                ? 'This item is currently out of stock.'
-                : 'Choose a quantity available in stock.';
+        if ($quantity === false) {
+            $message = 'Choose a valid quantity.';
             $messageType = 'error';
         } else {
-            if (!is_array($cart)) {
-                $cart = [];
+            $result = cart_add((int) $product['id'], $quantity);
+            if ($result['ok']) {
+                cart_queue_notice($result['notice'] ?? ($product['name'] . ' added to your cart.'));
+                header('Location: product.php?slug=' . rawurlencode((string) $product['slug']));
+                exit;
             }
-            $cart[$product['id']] = $alreadyInCart + $quantity;
-            $_SESSION['cart'] = $cart;
-            $_SESSION['flash_message'] = $product['name'] . ' added to your cart.';
-            header('Location: product.php?slug=' . rawurlencode((string) $product['slug']));
-            exit;
+            $message = $result['notice'];
+            $messageType = 'error';
         }
     }
 }
 
-if (isset($_SESSION['flash_message'])) {
-    $message = (string) $_SESSION['flash_message'];
-    unset($_SESSION['flash_message']);
+if ($message === '') {
+    $message = cart_take_notice();
 }
 
 $pageTitle = $product ? (string) $product['name'] : 'Product not found';

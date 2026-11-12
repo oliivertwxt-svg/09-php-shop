@@ -54,15 +54,4 @@ function verify_csrf_token(mixed $token): bool
         && hash_equals($_SESSION['csrf_token'], $token);
 }
 
-function cart_count(): int
-{
-    $cart = $_SESSION['cart'] ?? [];
-    if (!is_array($cart)) {
-        return 0;
-    }
-
-    return array_sum(array_map(
-        static fn (mixed $quantity): int => is_int($quantity) && $quantity > 0 ? $quantity : 0,
-        $cart
-    ));
-}
+require_once __DIR__ . '/cart.php';

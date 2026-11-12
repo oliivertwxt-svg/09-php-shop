@@ -19,7 +19,7 @@ $pageTitle = $pageTitle ?? 'Swd Shop';
         </a>
         <nav class="main-nav" aria-label="Main navigation">
             <a href="index.php">Shop</a>
-            <a class="cart-link" href="index.php#products">
+            <a class="cart-link" href="cart.php">
                 Cart <span class="cart-count"><?= cart_count() ?></span>
             </a>
         </nav>
